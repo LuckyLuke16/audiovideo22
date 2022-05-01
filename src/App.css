@@ -1,9 +1,12 @@
 .App {
   text-align: center;
+  background: linear-gradient(170deg, rgba(245,236,195,1) 32%, rgba(255,214,156,1) 100%);
+  min-height: 100vh;
+
 }
 
 .App-header {
-  background-color: #FFA369;
+ 
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -19,6 +22,31 @@
 
 .App-link {
   color: #61dafb;
+}
+.navbar,
+.navbar-default {
+    background: linear-gradient(100deg, rgba(196,173,158,1) 52%, rgba(177,164,145,1) 100%);
+    color: white;
+
+}
+.container{
+  background: none !important;
+}
+.card{
+  border: none !important;
+}
+.audio-card{
+  background: linear-gradient(180deg, rgba(144,168,154,1) 32%, rgba(224,210,170,1) 100%);
+  color: white;
+  border: none;
+}
+.filter-card{
+  background: linear-gradient(180deg, rgba(223,167,97,1) 52%, rgba(236,188,155,1) 100%);
+  color: white;
+}
+.volume-card{
+  background: linear-gradient(180deg, rgba(195,180,176,1) 32%, rgba(175,186,171,1) 100%);
+  color: white;
 }
 
 
