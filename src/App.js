@@ -1,7 +1,9 @@
 import './App.css';
+import Audio from './Audio.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Navbar, Nav, Row, Col, Card, Stack, Button } from 'react-bootstrap';
 import { PlayFill, PauseFill, MusicNote } from "react-bootstrap-icons";
+import React from 'react'
 
 function App() {
   return (
@@ -29,10 +31,7 @@ function App() {
                     <div>
                       track position
                     </div>
-                    <div>
-                      <Button variant="outline-light" ><PlayFill size="30" /></Button>{' '}
-                      <Button variant="outline-light" ><PauseFill size="30" /></Button>{' '}
-                    </div>
+                    <Audio/>
                     <div>
                       speed
                     </div>
@@ -90,6 +89,7 @@ function App() {
                     <div>
                       speed
                     </div>
+
                     <div>
                       <MusicNote size="30" />
                       <Button variant="outline-light">Choose Audio</Button>{' '}
@@ -123,3 +123,5 @@ function App() {
 }
 
 export default App;
+
+
