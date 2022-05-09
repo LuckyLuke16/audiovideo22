@@ -20,7 +20,7 @@ function App() {
         </Container>
       </Navbar>
 
-      <Container md>
+      <Container >
         <br></br>
         <Row>
           <Col>
@@ -28,20 +28,7 @@ function App() {
               <Card className="audio-card">
                 <Card.Body>Audio 1 track name
                   <Stack gap={3}>
-                    <div>
-                      track position
-                    </div>
                     <Audio/>
-                    <div>
-                      speed
-                    </div>
-                    <div>
-                      <MusicNote size="30" />
-                      <Button variant="outline-light">Choose Audio</Button>{' '}
-                    </div>
-                    <div>
-                      visualisation
-                    </div>
                   </Stack>
                 </Card.Body>
               </Card>
@@ -79,24 +66,7 @@ function App() {
                 <Card.Body>Audio 2 track name
                   <Stack gap={3}>
 
-                    <div>
-                      position
-                    </div>
-                    <div>
-                      <Button variant="outline-light" ><PlayFill size="30" /></Button>{' '}
-                      <Button variant="outline-light" ><PauseFill size="30" /></Button>{' '}
-                    </div>
-                    <div>
-                      speed
-                    </div>
-
-                    <div>
-                      <MusicNote size="30" />
-                      <Button variant="outline-light">Choose Audio</Button>{' '}
-                    </div>
-                    <div>
-                      visualisation
-                    </div>
+                    <Audio/>
                   </Stack>
                 </Card.Body>
               </Card>
