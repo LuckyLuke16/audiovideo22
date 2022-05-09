@@ -6,15 +6,22 @@ import {MusicNote, PauseFill, PlayFill} from "react-bootstrap-icons";
 
 
 export default class Audio extends React.Component{
-    state = {
-        song: process.env.PUBLIC_URL + 'basic_beat.wav',
-        audioCtx: null,
-        buffer: null,
+    constructor(props) {
+        super(props);
+        this.state = {
+            songPath: process.env.PUBLIC_URL + 'basic_beat.wav',
+            audioElementNumber: props.value,
+            trackName: 'basic_beat',
+            audioCtx: null,
+            buffer: null,
+        }
     }
+
 
     render() {
         return (
             <div>
+                <p>{this.state.trackName}</p>
                 <div>
                     track position
                 </div>
@@ -34,7 +41,7 @@ export default class Audio extends React.Component{
                     <MusicNote size="30" />
                     <Button variant="outline-light">
                         <input type="file"
-                               id="dateien"
+                               id={this.state.audioElementNumber}
                                name="file"
                                accept=".wav,.mp3,.ogg"
                                onChange={() => this.handleFileUpload()}
@@ -50,13 +57,12 @@ export default class Audio extends React.Component{
         )
     }
     load() {
-        console.log(this.state.song);
         let audioCtx = new AudioContext();
         let source = audioCtx.createBufferSource();
 
         let request = new XMLHttpRequest();
 
-        request.open('GET', this.state.song, true);
+        request.open('GET', this.state.songPath, true);
         request.responseType = 'arraybuffer';
 
         request.onload = function() {
@@ -87,11 +93,16 @@ export default class Audio extends React.Component{
      * of component
      */
     handleFileUpload() {
-        const input = document.querySelector('input');
-        const curFiles = input.files;
+        console.log(this.state.audioElementNumber);
+        let input = document.getElementById(this.state.audioElementNumber);
+        let curFiles = input.files;
+        console.log(curFiles);
         if(curFiles.item(0)!=null) {
-            this.state.song = URL.createObjectURL(curFiles[0]);
+            this.setState({songPath: URL.createObjectURL(curFiles[0])});
+            this.setState({trackName: curFiles[0].name});
+            console.log(this.state.trackName);
         }
+        this.render();
 
     }
 }

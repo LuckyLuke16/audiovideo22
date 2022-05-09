@@ -26,9 +26,10 @@ function App() {
           <Col>
             <Stack gap={3}>
               <Card className="audio-card">
-                <Card.Body>Audio 1 track name
+                <Card.Body>
                   <Stack gap={3}>
-                    <Audio/>
+                    <Audio
+                    value='1'/>
                   </Stack>
                 </Card.Body>
               </Card>
@@ -63,10 +64,11 @@ function App() {
             <Stack gap={3}>
 
               <Card className='audio-card'>
-                <Card.Body>Audio 2 track name
+                <Card.Body>
                   <Stack gap={3}>
 
-                    <Audio/>
+                    <Audio
+                    value='2'/>
                   </Stack>
                 </Card.Body>
               </Card>
