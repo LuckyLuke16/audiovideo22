@@ -12,8 +12,9 @@ export default class Audio extends React.Component{
             songPath: process.env.PUBLIC_URL + 'basic_beat.wav',
             audioElementNumber: props.value,
             trackName: 'basic_beat',
-            audioCtx: null,
+            audioCtx: new AudioContext(),
             buffer: null,
+            isPlaying: false,
         }
     }
 
@@ -27,7 +28,7 @@ export default class Audio extends React.Component{
                 </div>
                 <Button
                     variant="outline-light"
-                    onClick={() => this.load()}>
+                    onClick={() => this.play()}>
                     <PlayFill size="30" />
                 </Button>{' '}
                 <Button variant="outline-light"
@@ -56,8 +57,22 @@ export default class Audio extends React.Component{
 
         )
     }
-    load() {
-        let audioCtx = new AudioContext();
+
+    play() {
+
+        if(this.state.isPlaying === true)
+        {
+            return;
+        }
+
+        if(this.state.audioCtx.state === "suspended")
+        {
+            this.state.audioCtx.resume()
+            this.state.isPlaying = true;
+            return;
+        }
+
+        let audioCtx = this.state.audioCtx;
         let source = audioCtx.createBufferSource();
 
         let request = new XMLHttpRequest();
@@ -67,7 +82,9 @@ export default class Audio extends React.Component{
 
         request.onload = function() {
             let audioData = request.response;
-            audioCtx.decodeAudioData(audioData, function(buffer) {
+            console.log(audioCtx);
+
+            audioCtx.decodeAudioData(audioData, function (buffer) {
                 console.log("start");
                 source.buffer = buffer;
                 source.connect(audioCtx.destination);
@@ -78,16 +95,15 @@ export default class Audio extends React.Component{
             });
         };
         request.send();
-    }
-    pause(){
-        let audioCtx = this.state.audioCtx;
-        if(audioCtx.state = "running"){
-            console.log("paused");
-            audioCtx.suspend();
-        }
-
+        this.state.audioCtx = audioCtx;
+        this.state.isPlaying = true;
     }
 
+    pause()
+    {
+        this.state.isPlaying = false;
+        this.state.audioCtx.suspend();
+    }
     /**
      * input file element of the audio component render function gives containing file to song path
      * of component
