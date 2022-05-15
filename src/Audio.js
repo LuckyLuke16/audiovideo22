@@ -10,14 +10,12 @@ export default class Audio extends React.Component{
             songPath: process.env.PUBLIC_URL + 'basic_beat.wav',
             audioElementNumber: props.value,
             trackName: 'basic_beat',
-            audioCtx: AudioContext,
+            audioCtx: null,
             buffer: null,
             isPlaying: false,
             value: 0,
         }
     }
-
-
     render() {
         return (
             <div>
@@ -61,7 +59,6 @@ export default class Audio extends React.Component{
                 </div>
 
             </div>
-
         )
     }
 
@@ -76,6 +73,12 @@ export default class Audio extends React.Component{
         {
             return;
         }
+
+        if(this.state.audioCtx === null)
+        {
+            this.state.audioCtx = new AudioContext();
+        }
+
         if(this.state.audioCtx.state === "suspended")
         {
             this.state.audioCtx.resume()
@@ -83,8 +86,8 @@ export default class Audio extends React.Component{
             return;
         }
 
-        let source = this.state.audioCtx.createBufferSource();
-
+        let audioCtx = this.state.audioCtx;
+        let source = audioCtx.createBufferSource();
         let request = new XMLHttpRequest();
 
         request.open('GET', this.state.songPath, true);
@@ -92,12 +95,12 @@ export default class Audio extends React.Component{
 
         request.onload = function() {
             let audioData = request.response;
-            //console.log(audioCtx);
+            console.log(audioCtx);
 
-            this.state.audioCtx.decodeAudioData(audioData, function (buffer) {
+            audioCtx.decodeAudioData(audioData, function (buffer) {
                 console.log("start");
                 source.buffer = buffer;
-                source.connect(this.state.audioCtx.destination);
+                source.connect(audioCtx.destination);
                 source.loop = true;
                 source.start(0);
                 //let float32Data = buffer.getChannelData(0);
@@ -105,7 +108,7 @@ export default class Audio extends React.Component{
             });
         };
         request.send();
-        //this.state.audioCtx = audioCtx;
+        this.state.audioCtx = audioCtx;
         this.state.isPlaying = true;
     }
 
