@@ -2,7 +2,6 @@ import './App.css';
 import Audio from './Audio.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Navbar, Nav, Row, Col, Card, Stack, Button } from 'react-bootstrap';
-import { PlayFill, PauseFill, MusicNote } from "react-bootstrap-icons";
 import React from 'react'
 
 function App() {
@@ -20,28 +19,16 @@ function App() {
         </Container>
       </Navbar>
 
-      <Container md>
+      <Container >
         <br></br>
         <Row>
           <Col>
             <Stack gap={3}>
               <Card className="audio-card">
-                <Card.Body>Audio 1 track name
+                <Card.Body>
                   <Stack gap={3}>
-                    <div>
-                      track position
-                    </div>
-                    <Audio/>
-                    <div>
-                      speed
-                    </div>
-                    <div>
-                      <MusicNote size="30" />
-                      <Button variant="outline-light">Choose Audio</Button>{' '}
-                    </div>
-                    <div>
-                      visualisation
-                    </div>
+                    <Audio
+                    value='1'/>
                   </Stack>
                 </Card.Body>
               </Card>
@@ -57,6 +44,7 @@ function App() {
             </Stack></Col>
           <Col>
             <Card className='volume-card'>
+
               <Card.Body>Volume
                 <Stack gap={3}>
                   <div>
@@ -76,27 +64,11 @@ function App() {
             <Stack gap={3}>
 
               <Card className='audio-card'>
-                <Card.Body>Audio 2 track name
+                <Card.Body>
                   <Stack gap={3}>
 
-                    <div>
-                      position
-                    </div>
-                    <div>
-                      <Button variant="outline-light" ><PlayFill size="30" /></Button>{' '}
-                      <Button variant="outline-light" ><PauseFill size="30" /></Button>{' '}
-                    </div>
-                    <div>
-                      speed
-                    </div>
-
-                    <div>
-                      <MusicNote size="30" />
-                      <Button variant="outline-light">Choose Audio</Button>{' '}
-                    </div>
-                    <div>
-                      visualisation
-                    </div>
+                    <Audio
+                    value='2'/>
                   </Stack>
                 </Card.Body>
               </Card>
