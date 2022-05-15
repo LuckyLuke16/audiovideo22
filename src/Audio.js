@@ -63,12 +63,7 @@ export default class Audio extends React.Component{
     }
 
     play() {
-        if(this.state.audioCtx==null){
-            console.log('jak');
-            this.setState({audioCtx: new AudioContext()});
-        }
-        this.setState({audioCtx: new AudioContext()});
-        console.log(this.state.audioCtx);
+
         if(this.state.isPlaying === true)
         {
             return;
@@ -125,11 +120,13 @@ export default class Audio extends React.Component{
         console.log(this.state.audioElementNumber);
         let input = document.getElementById(this.state.audioElementNumber);
         let curFiles = input.files;
-        console.log(curFiles);
         if(curFiles.item(0)!=null) {
             this.setState({songPath: URL.createObjectURL(curFiles[0])});
             this.setState({trackName: curFiles[0].name});
-            console.log(this.state.trackName);
+            this.state.audioCtx.suspend();
+            this.setState({isPlaying: false});
+            this.setState({audioCtx: null});
+            console.log(this.state.audioCtx);
         }
         this.render();
 
