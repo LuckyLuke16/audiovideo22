@@ -2,7 +2,6 @@ import './App.css';
 import Audio from './Audio.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Navbar, Nav, Row, Col, Card, Stack, Button } from 'react-bootstrap';
-import { PlayFill, PauseFill, MusicNote } from "react-bootstrap-icons";
 import React from 'react'
 
 function App() {
@@ -45,6 +44,7 @@ function App() {
             </Stack></Col>
           <Col>
             <Card className='volume-card'>
+
               <Card.Body>Volume
                 <Stack gap={3}>
                   <div>

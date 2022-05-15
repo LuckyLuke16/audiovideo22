@@ -3,8 +3,6 @@ import {Button} from "react-bootstrap";
 import {MusicNote, PauseFill, PlayFill} from "react-bootstrap-icons";
 
 
-
-
 export default class Audio extends React.Component{
     constructor(props) {
         super(props);
@@ -12,9 +10,10 @@ export default class Audio extends React.Component{
             songPath: process.env.PUBLIC_URL + 'basic_beat.wav',
             audioElementNumber: props.value,
             trackName: 'basic_beat',
-            audioCtx: new AudioContext(),
+            audioCtx: AudioContext,
             buffer: null,
             isPlaying: false,
+            value: 0,
         }
     }
 
@@ -42,12 +41,20 @@ export default class Audio extends React.Component{
                     <MusicNote size="30" />
                     <Button variant="outline-light">
                         <input type="file"
+                               className="upload"
                                id={this.state.audioElementNumber}
                                name="file"
                                accept=".wav,.mp3,.ogg"
                                onChange={() => this.handleFileUpload()}
                         />Choose Audio</Button>{' '}
-
+                </div>
+                <div>
+                    <input
+                        type="range"
+                        min="-5" max="5"
+                        value={this.state.value}
+                        onChange={(e) => this.handleVolume(e.target.value)}
+                    />
                 </div>
                 <div>
                     visualisation
@@ -59,12 +66,16 @@ export default class Audio extends React.Component{
     }
 
     play() {
-
+        if(this.state.audioCtx==null){
+            console.log('jak');
+            this.setState({audioCtx: new AudioContext()});
+        }
+        this.setState({audioCtx: new AudioContext()});
+        console.log(this.state.audioCtx);
         if(this.state.isPlaying === true)
         {
             return;
         }
-
         if(this.state.audioCtx.state === "suspended")
         {
             this.state.audioCtx.resume()
@@ -72,8 +83,7 @@ export default class Audio extends React.Component{
             return;
         }
 
-        let audioCtx = this.state.audioCtx;
-        let source = audioCtx.createBufferSource();
+        let source = this.state.audioCtx.createBufferSource();
 
         let request = new XMLHttpRequest();
 
@@ -82,12 +92,12 @@ export default class Audio extends React.Component{
 
         request.onload = function() {
             let audioData = request.response;
-            console.log(audioCtx);
+            //console.log(audioCtx);
 
-            audioCtx.decodeAudioData(audioData, function (buffer) {
+            this.state.audioCtx.decodeAudioData(audioData, function (buffer) {
                 console.log("start");
                 source.buffer = buffer;
-                source.connect(audioCtx.destination);
+                source.connect(this.state.audioCtx.destination);
                 source.loop = true;
                 source.start(0);
                 //let float32Data = buffer.getChannelData(0);
@@ -95,7 +105,7 @@ export default class Audio extends React.Component{
             });
         };
         request.send();
-        this.state.audioCtx = audioCtx;
+        //this.state.audioCtx = audioCtx;
         this.state.isPlaying = true;
     }
 
@@ -119,6 +129,12 @@ export default class Audio extends React.Component{
             console.log(this.state.trackName);
         }
         this.render();
+
+    }
+
+    handleVolume(e) {
+        console.log(this.state.value)
+        this.setState({value: e});
 
     }
 }
