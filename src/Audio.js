@@ -5,7 +5,7 @@ import {PauseFill, PlayFill} from "react-bootstrap-icons";
 export default class Audio extends React.Component{
     state = {
         song: process.env.PUBLIC_URL + 'freejazz.wav',
-        audioCtx: new AudioContext(),
+        audioCtx: null,
         isPlaying: false,
     }
     render() {
@@ -28,6 +28,11 @@ export default class Audio extends React.Component{
         if(this.state.isPlaying === true)
         {
             return;
+        }
+
+        if(this.state.audioCtx === null)
+        {
+            this.state.audioCtx = new AudioContext();
         }
 
         if(this.state.audioCtx.state === "suspended")
@@ -69,4 +74,3 @@ export default class Audio extends React.Component{
         this.state.audioCtx.suspend();
     }
 }
-
