@@ -52,7 +52,7 @@ export default class Audio extends React.Component {
             min="-5"
             max="5"
             value={this.state.value}
-            class="slider"
+            className="slider"
             onChange={(e) => this.handleVolume(e.target.value)}
           />
         </div>
@@ -144,7 +144,6 @@ export default class Audio extends React.Component {
     let width = canvas.width;
     let height = canvas.height;
     var analyser = this.state.analyser;
-    var bufferLength = analyser.frequencyBinCount;
     analyser.fftSize = 2048;
     var bufferLength = analyser.fftSize;
     var freqData = new Uint8Array(bufferLength);
