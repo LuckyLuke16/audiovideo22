@@ -59,4 +59,40 @@ p {
   font-family: "Arial Black";
 
 }
+.cardItems {
+  margin-bottom: 2rem !important;
+}
+.slider {
+  -webkit-appearance: none;
+  width: 80%;
+  height: 3px;
+  border-radius: 8px;  
+  background: #ffffff;
+  outline: none;
+  opacity: .7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%; 
+  background: #ffffff;
+  cursor: pointer;
+}
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+}
 
