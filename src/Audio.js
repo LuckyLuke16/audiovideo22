@@ -13,9 +13,11 @@ export default class Audio extends React.Component{
             audioCtx: null,
             buffer: null,
             isPlaying: false,
-            value: 0,
+            value: 1,
+            gainNode: null,
         }
     }
+
     render() {
         return (
             <div>
@@ -49,7 +51,8 @@ export default class Audio extends React.Component{
                 <div>
                     <input
                         type="range"
-                        min="-5" max="5"
+                        min="0" max="2"
+                        step="0.02"
                         value={this.state.value}
                         onChange={(e) => this.handleVolume(e.target.value)}
                     />
@@ -62,6 +65,7 @@ export default class Audio extends React.Component{
         )
     }
 
+
     play() {
 
         if(this.state.isPlaying === true)
@@ -72,6 +76,7 @@ export default class Audio extends React.Component{
         if(this.state.audioCtx === null)
         {
             this.state.audioCtx = new AudioContext();
+            this.state.gainNode = this.state.audioCtx.createGain();
         }
 
         if(this.state.audioCtx.state === "suspended")
@@ -81,30 +86,31 @@ export default class Audio extends React.Component{
             return;
         }
 
-        let audioCtx = this.state.audioCtx;
-        let source = audioCtx.createBufferSource();
-        let request = new XMLHttpRequest();
+            let audioCtx = this.state.audioCtx;
+            let gainNode = this.state.gainNode;
+            //let gainNode = audioCtx.createGain();
+            let source = audioCtx.createBufferSource();
+            let request = new XMLHttpRequest();
 
-        request.open('GET', this.state.songPath, true);
-        request.responseType = 'arraybuffer';
+            request.open('GET', this.state.songPath, true);
+            request.responseType = 'arraybuffer';
 
-        request.onload = function() {
-            let audioData = request.response;
-            console.log(audioCtx);
-
-            audioCtx.decodeAudioData(audioData, function (buffer) {
-                console.log("start");
-                source.buffer = buffer;
-                source.connect(audioCtx.destination);
-                source.loop = true;
-                source.start(0);
-                //let float32Data = buffer.getChannelData(0);
-                //let dataView = new DataView(float32Data.buffer);
-            });
-        };
-        request.send();
-        this.state.audioCtx = audioCtx;
-        this.state.isPlaying = true;
+            request.onload = function () {
+                let audioData = request.response;
+                audioCtx.decodeAudioData(audioData, function (buffer) {
+                    console.log("start");
+                    source.buffer = buffer;
+                    source.connect(gainNode).connect(audioCtx.destination);
+                    source.loop = true;
+                    source.start(0);
+                    //let float32Data = buffer.getChannelData(0);
+                    //let dataView = new DataView(float32Data.buffer);
+                });
+            };
+            request.send();
+            this.state.gainNode = gainNode;
+            this.state.audioCtx = audioCtx;
+            this.state.isPlaying = true;
     }
 
     pause()
@@ -133,8 +139,11 @@ export default class Audio extends React.Component{
     }
 
     handleVolume(e) {
-        console.log(this.state.value)
         this.setState({value: e});
+        if(this.state.audioCtx === null) {
+            return;
+        }
+        this.state.gainNode.gain.value = this.state.value;
 
     }
 }
