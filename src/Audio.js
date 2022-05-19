@@ -6,6 +6,7 @@ export default class Audio extends React.Component {
   constructor(props) {
     super(props);
     this.analyzerCanvas = React.createRef();
+    this.volumeSlider = React.createRef();
     this.state = {
       songPath: process.env.PUBLIC_URL + "basic_beat.wav",
       audioElementNumber: props.value,
@@ -16,6 +17,7 @@ export default class Audio extends React.Component {
       isPlaying: false,
       value: 0,
         gainNode: null,
+
     };
   }
   render() {
@@ -50,11 +52,12 @@ export default class Audio extends React.Component {
         <div className="cardItems">
           <input
             type="range"
-            min="0"
-            max="2"
+            min="-1"
+            max="1"
             step="0.02"
             value={this.state.value}
             className="slider"
+            ref={this.volumeSlider}
             onChange={(e) => this.handleVolume(e.target.value)}
           />
         </div>
@@ -96,9 +99,10 @@ export default class Audio extends React.Component {
                 let audioData = request.response;
                 audioCtx.decodeAudioData(audioData, function (buffer) {
                     source.buffer = buffer;
-                    source.connect(gainNode).connect(audioCtx.destination);
                     source.connect(analyser);
                     analyser.connect(audioCtx.destination);
+                    source.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
                     source.loop = true;
                     source.start(0);
                     //let float32Data = buffer.getChannelData(0);
@@ -109,7 +113,8 @@ export default class Audio extends React.Component {
             this.state.gainNode = gainNode;
             this.state.audioCtx = audioCtx;
             this.state.isPlaying = true;
-             this.createVisualization();
+            this.createVisualization();
+            this.handleVolume();
 
   }
 
@@ -128,7 +133,9 @@ export default class Audio extends React.Component {
     if (curFiles.item(0) != null) {
       this.setState({ songPath: URL.createObjectURL(curFiles[0]) });
       this.setState({ trackName: curFiles[0].name });
-      this.state.audioCtx.suspend();
+      if(this.state.audioCtx !== null) {
+          this.state.audioCtx.suspend();
+      }
       this.setState({ isPlaying: false });
       this.setState({ audioCtx: null });
       console.log(this.state.audioCtx);
@@ -136,13 +143,14 @@ export default class Audio extends React.Component {
     this.render();
   }
 
-    handleVolume(e) {
-        this.setState({value: e});
+    handleVolume() {
+        this.setState({value: this.volumeSlider.current.value});
         if(this.state.audioCtx === null) {
             return;
         }
-        this.state.gainNode.gain.value = this.state.value;
+        this.state.gainNode.gain.value = this.volumeSlider.current.value;
     }
+
     createVisualization() {
         let canvas = this.analyzerCanvas.current;
         let canvasCtx = canvas.getContext("2d");
