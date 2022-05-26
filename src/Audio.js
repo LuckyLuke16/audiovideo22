@@ -15,7 +15,7 @@ export default class Audio extends React.Component {
       analyser: null,
       buffer: null,
       isPlaying: false,
-      value: 0,
+      value: 0.5,
         gainNode: null,
 
     };
@@ -52,9 +52,9 @@ export default class Audio extends React.Component {
         <div className="cardItems">
           <input
             type="range"
-            min="-1"
+            min="0"
             max="1"
-            step="0.02"
+            step="0.01"
             value={this.state.value}
             className="slider"
             ref={this.volumeSlider}
@@ -89,7 +89,7 @@ export default class Audio extends React.Component {
             let gainNode = this.state.gainNode;
             let source = audioCtx.createBufferSource();
             let analyser = audioCtx.createAnalyser();
-             this.state.analyser = analyser;
+            this.state.analyser = analyser;
             let request = new XMLHttpRequest();
 
             request.open('GET', this.state.songPath, true);
@@ -99,14 +99,11 @@ export default class Audio extends React.Component {
                 let audioData = request.response;
                 audioCtx.decodeAudioData(audioData, function (buffer) {
                     source.buffer = buffer;
-                    source.connect(analyser);
                     analyser.connect(audioCtx.destination);
-                    source.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
+                    source.connect(gainNode)
+                    gainNode.connect(analyser)
                     source.loop = true;
                     source.start(0);
-                    //let float32Data = buffer.getChannelData(0);
-                    //let dataView = new DataView(float32Data.buffer);
                 });
             };
             request.send();
