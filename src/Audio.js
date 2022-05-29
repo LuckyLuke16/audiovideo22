@@ -7,7 +7,6 @@ export default class Audio extends React.Component {
     super(props);
     this.analyzerCanvas = React.createRef();
     this.volumeSlider = React.createRef();
-    this.playbackSpeedSlider = React.createRef();
     this.state = {
       songPath: process.env.PUBLIC_URL + "basic_beat.wav",
       audioElementNumber: props.value,
@@ -16,10 +15,8 @@ export default class Audio extends React.Component {
       analyser: null,
       buffer: null,
       isPlaying: false,
-      value: 0,
-      gainNode: null,
-      source: null,
-      playbackSpeed: 1,
+      value: 0.5,
+        gainNode: null,
 
     };
   }
@@ -37,19 +34,7 @@ export default class Audio extends React.Component {
           </Button>{" "}
         </div>
 
-        <div className="cardItems" >Playback speed: {this.state.playbackSpeed} 
-        
-        <input
-            type="range"
-            min="0"
-            max="2"
-            step="0.5"
-            value={this.state.playbackSpeed}
-            className="slider"
-            ref={this.playbackSpeedSlider}
-            onChange={(e) => this.handlePlaybackSpeed(e.target.value)}
-          />
-          </div>
+        <div className="cardItems">speed</div>
         <div className="cardItems">
           <MusicNote size="30" />
           <Button variant="outline-light">
@@ -67,9 +52,9 @@ export default class Audio extends React.Component {
         <div className="cardItems">
           <input
             type="range"
-            min="-1"
+            min="0"
             max="1"
-            step="0.02"
+            step="0.01"
             value={this.state.value}
             className="slider"
             ref={this.volumeSlider}
@@ -88,10 +73,11 @@ export default class Audio extends React.Component {
       return;
     }
 
-    if (this.state.audioCtx === null) {
-      this.state.audioCtx = new AudioContext();
-      this.state.gainNode = this.state.audioCtx.createGain();
-    }
+        if(this.state.audioCtx === null)
+        {
+            this.state.audioCtx = new AudioContext();
+            this.state.gainNode = this.state.audioCtx.createGain();
+        }
 
     if (this.state.audioCtx.state === "suspended") {
       this.state.audioCtx.resume();
@@ -99,38 +85,33 @@ export default class Audio extends React.Component {
       return;
     }
 
-    let audioCtx = this.state.audioCtx;
-    let gainNode = this.state.gainNode;
-    let source = audioCtx.createBufferSource();
-    this.state.source = source;
-    let analyser = audioCtx.createAnalyser();
-    this.state.analyser = analyser;
-    let request = new XMLHttpRequest();
+            let audioCtx = this.state.audioCtx;
+            let gainNode = this.state.gainNode;
+            let source = audioCtx.createBufferSource();
+            let analyser = audioCtx.createAnalyser();
+            this.state.analyser = analyser;
+            let request = new XMLHttpRequest();
 
-    request.open('GET', this.state.songPath, true);
-    request.responseType = 'arraybuffer';
+            request.open('GET', this.state.songPath, true);
+            request.responseType = 'arraybuffer';
 
-    request.onload = function () {
-      let audioData = request.response;
-      audioCtx.decodeAudioData(audioData, function (buffer) {
-        source.buffer = buffer;
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        source.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        source.loop = true;
-        source.start(0);
-        //let float32Data = buffer.getChannelData(0);
-        //let dataView = new DataView(float32Data.buffer);
-      });
-    };
-    request.send();
-    this.state.gainNode = gainNode;
-    this.state.audioCtx = audioCtx;
-    this.state.isPlaying = true;
-    this.createVisualization();
-    this.handlePlaybackSpeed();
-    this.handleVolume();
+            request.onload = function () {
+                let audioData = request.response;
+                audioCtx.decodeAudioData(audioData, function (buffer) {
+                    source.buffer = buffer;
+                    analyser.connect(audioCtx.destination);
+                    source.connect(gainNode)
+                    gainNode.connect(analyser)
+                    source.loop = true;
+                    source.start(0);
+                });
+            };
+            request.send();
+            this.state.gainNode = gainNode;
+            this.state.audioCtx = audioCtx;
+            this.state.isPlaying = true;
+            this.createVisualization();
+            this.handleVolume();
 
   }
 
@@ -149,8 +130,8 @@ export default class Audio extends React.Component {
     if (curFiles.item(0) != null) {
       this.setState({ songPath: URL.createObjectURL(curFiles[0]) });
       this.setState({ trackName: curFiles[0].name });
-      if (this.state.audioCtx !== null) {
-        this.state.audioCtx.suspend();
+      if(this.state.audioCtx !== null) {
+          this.state.audioCtx.suspend();
       }
       this.setState({ isPlaying: false });
       this.setState({ audioCtx: null });
@@ -159,58 +140,49 @@ export default class Audio extends React.Component {
     this.render();
   }
 
-  handleVolume() {
-    this.setState({ value: this.volumeSlider.current.value });
-    if (this.state.audioCtx === null) {
-      return;
-    }
-    this.state.gainNode.gain.value = this.volumeSlider.current.value;
-  }
-
-  handlePlaybackSpeed() {
-    this.setState({ playbackSpeed: this.playbackSpeedSlider.current.value });
-    if (this.state.audioCtx === null) {
-      return;
-    }
-    this.state.source.playbackRate.value = this.playbackSpeedSlider.current.value;
-
-  }
-
-  createVisualization() {
-    let canvas = this.analyzerCanvas.current;
-    let canvasCtx = canvas.getContext("2d");
-    let width = canvas.width;
-    let height = canvas.height;
-    var analyser = this.state.analyser;
-    analyser.fftSize = 2048;
-    var bufferLength = analyser.fftSize;
-    var freqData = new Uint8Array(bufferLength);
-    function renderFrame() {
-      requestAnimationFrame(renderFrame);
-      analyser.getByteTimeDomainData(freqData);
-      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-      canvasCtx.lineWidth = 2;
-      canvasCtx.strokeStyle = "rgb(255, 255, 255)";
-
-      const sliceWidth = (width * 1.0) / bufferLength;
-      let x = 0;
-
-      canvasCtx.beginPath();
-      for (var i = 0; i < bufferLength; i++) {
-        const v = freqData[i] / 128.0;
-        const y = (v * height) / 2;
-
-        if (i === 0) canvasCtx.moveTo(x, y);
-        else canvasCtx.lineTo(x, y);
-
-        x += sliceWidth;
-      }
-
-      canvasCtx.lineTo(width, height / 2);
-      canvasCtx.stroke();
+    handleVolume() {
+        this.setState({value: this.volumeSlider.current.value});
+        if(this.state.audioCtx === null) {
+            return;
+        }
+        this.state.gainNode.gain.value = this.volumeSlider.current.value;
     }
 
-    renderFrame();
-  }
+    createVisualization() {
+        let canvas = this.analyzerCanvas.current;
+        let canvasCtx = canvas.getContext("2d");
+        let width = canvas.width;
+        let height = canvas.height;
+        var analyser = this.state.analyser;
+        analyser.fftSize = 2048;
+        var bufferLength = analyser.fftSize;
+        var freqData = new Uint8Array(bufferLength);
+        function renderFrame() {
+            requestAnimationFrame(renderFrame);
+            analyser.getByteTimeDomainData(freqData);
+            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+            canvasCtx.lineWidth = 2;
+            canvasCtx.strokeStyle = "rgb(255, 255, 255)";
+
+            const sliceWidth = (width * 1.0) / bufferLength;
+            let x = 0;
+
+            canvasCtx.beginPath();
+            for (var i = 0; i < bufferLength; i++) {
+                const v = freqData[i] / 128.0;
+                const y = (v * height) / 2;
+
+                if (i === 0) canvasCtx.moveTo(x, y);
+                else canvasCtx.lineTo(x, y);
+
+                x += sliceWidth;
+            }
+
+            canvasCtx.lineTo(width, height / 2);
+            canvasCtx.stroke();
+        }
+
+        renderFrame();
+    }
 }
 
