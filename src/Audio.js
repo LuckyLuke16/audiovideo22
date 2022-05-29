@@ -65,6 +65,7 @@ export default class Audio extends React.Component {
           </Button>{" "}
         </div>
         <div className="cardItems">
+          Volume: {this.state.value}
           <input
             type="range"
             min="0"
