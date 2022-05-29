@@ -37,7 +37,8 @@ export default class Audio extends React.Component {
           </Button>{" "}
         </div>
 
-        <div className="cardItems">Playback speed 
+        <div className="cardItems" >Playback speed: {this.state.playbackSpeed} 
+        
         <input
             type="range"
             min="0"
@@ -47,7 +48,8 @@ export default class Audio extends React.Component {
             className="slider"
             ref={this.playbackSpeedSlider}
             onChange={(e) => this.handlePlaybackSpeed(e.target.value)}
-          /></div>
+          />
+          </div>
         <div className="cardItems">
           <MusicNote size="30" />
           <Button variant="outline-light">
