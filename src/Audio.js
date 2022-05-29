@@ -41,7 +41,7 @@ export default class Audio extends React.Component {
           Playback speed: {this.state.playbackSpeed}
           <input
             type="range"
-            min="0"
+            min="0.5"
             max="2"
             step="0.5"
             value={this.state.playbackSpeed}
