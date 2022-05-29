@@ -51,7 +51,6 @@ export default class Audio extends React.Component {
           />
         </div>
         <div className="cardItems">
-          <MusicNote size="30" />
           <Button variant="outline-light">
             <input
               type="file"
@@ -61,7 +60,7 @@ export default class Audio extends React.Component {
               accept=".wav,.mp3,.ogg"
               onChange={() => this.handleFileUpload()}
             />
-            Choose Audio
+            {<MusicNote size="30" />}Choose Audio
           </Button>{" "}
         </div>
         <div className="cardItems">
