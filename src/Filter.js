@@ -5,7 +5,6 @@ import React from 'react';
 
 export default class Filter extends React.Component{
     constructor(props) {
-        console.log("render");
         super(props);
         this.audio = this.props.audio;
         this.lowpassFilter = null;
@@ -15,7 +14,6 @@ export default class Filter extends React.Component{
         }
     }
     setFilter(filterTyp){
-        console.log(this.audio.audioCtx);
         if(this.audio.audioCtx === null) {
             return;
         }
@@ -48,13 +46,13 @@ export default class Filter extends React.Component{
         );
     }
 
-    // updates audio prop from audio component
+    // is called whenever a prop is changed
+    // updates audio props from audio component
     componentDidUpdate(prevProps, prevState, snapshot) {
         if(this.props.audio !== prevProps.audio){
             this.audio = this.props.audio;
             if(this.props.audio.audioCtx === null)
             {
-                console.log("cx is null");
                 this.setState({isLowpassOn : false});
             }
         }

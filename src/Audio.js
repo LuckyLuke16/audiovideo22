@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "react-bootstrap";
-import { MusicNote, PauseFill, PlayFill } from "react-bootstrap-icons";
+import {Button} from "react-bootstrap";
+import {MusicNote, PauseBtn, PauseFill, PlayFill} from "react-bootstrap-icons";
 import Filter from "./Filter";
 
 export default class Audio extends React.Component {
@@ -9,7 +9,7 @@ export default class Audio extends React.Component {
     this.analyzerCanvas = React.createRef();
     this.volumeSlider = React.createRef();
     this.playbackSpeedSlider = React.createRef();
-
+    this.playPause = true;
     this.state = {
         songPath: process.env.PUBLIC_URL + "basic_beat.wav",
         audioElementNumber: props.value,
@@ -26,21 +26,23 @@ export default class Audio extends React.Component {
     };
   }
   render() {
+      let playPauseIcon;
+      if (this.state.isPlaying) {
+          playPauseIcon = <PauseFill size="30" />;
+      } else {
+          playPauseIcon = <PlayFill size="30" />;
+      }
     return (
       <div>
         <p>{this.state.trackName}</p>
         <div className="cardItems">track position</div>
         <div className="cardItems">
-          <Button variant="outline-light" onClick={() => this.play()}>
-            <PlayFill size="30" />
-          </Button>{" "}
-          <Button variant="outline-light" onClick={() => this.pause()}>
-            <PauseFill size="30" />
-          </Button>{" "}
+            <Button variant="outline-light" onClick={() => this.handlePlayPause()}>
+                {playPauseIcon}
+            </Button>{" "}
         </div>
-
         <div className="cardItems">
-          Playback speed: {this.state.playbackSpeed}
+          Playback speed: {this.state.playbackSpeed}x
           <input
             type="range"
             min="0.5"
@@ -66,7 +68,9 @@ export default class Audio extends React.Component {
           </Button>{" "}
         </div>
         <div className="cardItems">
-          Volume: {this.state.value}
+            <div>
+            <p2>Volume:</p2>
+            </div>
           <input
             type="range"
             min="0"
@@ -88,11 +92,14 @@ export default class Audio extends React.Component {
     );
   }
 
-  play() {
-    if (this.state.isPlaying === true) {
-      return;
-    }
+  handlePlayPause(){
+      if(this.state.isPlaying === true)
+          this.pause();
+      else
+          this.play();
+  }
 
+  play() {
     if (this.state.audioCtx === null) {
       this.state.audioCtx = new AudioContext();
       this.state.gainNode = this.state.audioCtx.createGain();
@@ -100,7 +107,7 @@ export default class Audio extends React.Component {
 
     if (this.state.audioCtx.state === "suspended") {
       this.state.audioCtx.resume();
-      this.state.isPlaying = true;
+      this.setState({isPlaying: true})
       return;
     }
             let audioCtx = this.state.audioCtx;
@@ -137,8 +144,8 @@ export default class Audio extends React.Component {
   pause() {
       if(this.state.audioCtx=== null)
           return
-    this.state.isPlaying = false;
-    this.state.audioCtx.suspend();
+      this.setState({isPlaying: false});
+      this.state.audioCtx.suspend();
   }
   /**
    * input file element of the audio component render function gives containing file to song path
