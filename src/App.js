@@ -2,7 +2,7 @@ import './App.css';
 import Audio from './Audio.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Navbar, Nav, Row, Col, Card, Stack, Button } from 'react-bootstrap';
-import React from 'react'
+import React from 'react';
 
 function App() {
   return (
@@ -32,16 +32,8 @@ function App() {
                   </Stack>
                 </Card.Body>
               </Card>
-              <Card className='filter-card'>
-                <Card.Body>Filters
-                  <Stack gap={3}>
-                    <Button variant="outline-light">Filter</Button>{' '}
-                    <Button variant="outline-light">Filter</Button>{' '}
-                    <Button variant="outline-light">Filter</Button>{' '}
-                  </Stack>
-                </Card.Body>
-              </Card>
-            </Stack></Col>
+            </Stack>
+          </Col>
           <Col>
             <Card className='volume-card'>
 
@@ -66,18 +58,8 @@ function App() {
               <Card className='audio-card'>
                 <Card.Body>
                   <Stack gap={3}>
-
                     <Audio
                     value='2'/>
-                  </Stack>
-                </Card.Body>
-              </Card>
-              <Card className='filter-card'>
-                <Card.Body>Filters
-                  <Stack gap={3}>
-                    <Button variant="outline-light">Filter</Button>{' '}
-                    <Button variant="outline-light">Filter</Button>{' '}
-                    <Button variant="outline-light">Filter</Button>{' '}
                   </Stack>
                 </Card.Body>
               </Card>

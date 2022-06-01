@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { MusicNote, PauseFill, PlayFill } from "react-bootstrap-icons";
+import Filter from "./Filter";
 
 export default class Audio extends React.Component {
   constructor(props) {
@@ -10,17 +11,18 @@ export default class Audio extends React.Component {
     this.playbackSpeedSlider = React.createRef();
 
     this.state = {
-      songPath: process.env.PUBLIC_URL + "basic_beat.wav",
-      audioElementNumber: props.value,
-      trackName: "basic_beat",
-      audioCtx: null,
-      analyser: null,
-      buffer: null,
-      isPlaying: false,
-      value: 0.5,
-      gainNode: null,
-      source: null,
-      playbackSpeed: 1,
+        songPath: process.env.PUBLIC_URL + "basic_beat.wav",
+        audioElementNumber: props.value,
+        trackName: "basic_beat",
+        audioCtx: null,
+        analyser: null,
+        buffer: null,
+        source: null,
+        isPlaying: false,
+        value: 0.5,
+        gainNode: null,
+        playbackSpeed: 1,
+
     };
   }
   render() {
@@ -79,6 +81,9 @@ export default class Audio extends React.Component {
         <div>
           <canvas ref={this.analyzerCanvas}></canvas>{" "}
         </div>
+          <Filter
+              audio={this.state}
+          />
       </div>
     );
   }
@@ -98,39 +103,40 @@ export default class Audio extends React.Component {
       this.state.isPlaying = true;
       return;
     }
+            let audioCtx = this.state.audioCtx;
+            let gainNode = this.state.gainNode;
+            let source = audioCtx.createBufferSource();
+            this.state.source = source;
+             let analyser = audioCtx.createAnalyser();
+            this.state.analyser = analyser;
+            let request = new XMLHttpRequest();
+            request.open('GET', this.state.songPath, true);
+            request.responseType = 'arraybuffer';
+            request.onload = function () {
+                let audioData = request.response;
+                audioCtx.decodeAudioData(audioData, function (buffer) {
+                    source.buffer = buffer;
+                    analyser.connect(audioCtx.destination);
+                    source.connect(gainNode);
+                    gainNode.connect(analyser);
+                    source.loop = true;
+                    source.start(0);
+                });
+            };
+            request.send();
+            this.state.gainNode = gainNode;
+            this.state.audioCtx = audioCtx;
+            this.state.isPlaying = true;
+            this.createVisualization();
+            this.handlePlaybackSpeed();
+            this.handleVolume();
 
-    let audioCtx = this.state.audioCtx;
-    let gainNode = this.state.gainNode;
-    let source = audioCtx.createBufferSource();
-    this.state.source = source;
-    let analyser = audioCtx.createAnalyser();
-    this.state.analyser = analyser;
-    let request = new XMLHttpRequest();
 
-    request.open("GET", this.state.songPath, true);
-    request.responseType = "arraybuffer";
-
-    request.onload = function () {
-      let audioData = request.response;
-      audioCtx.decodeAudioData(audioData, function (buffer) {
-        source.buffer = buffer;
-        analyser.connect(audioCtx.destination);
-        source.connect(gainNode);
-        gainNode.connect(analyser);
-        source.loop = true;
-        source.start(0);
-      });
-    };
-    request.send();
-    this.state.gainNode = gainNode;
-    this.state.audioCtx = audioCtx;
-    this.state.isPlaying = true;
-    this.createVisualization();
-    this.handlePlaybackSpeed();
-    this.handleVolume();
   }
 
   pause() {
+      if(this.state.audioCtx=== null)
+          return
     this.state.isPlaying = false;
     this.state.audioCtx.suspend();
   }
@@ -145,14 +151,13 @@ export default class Audio extends React.Component {
     if (curFiles.item(0) != null) {
       this.setState({ songPath: URL.createObjectURL(curFiles[0]) });
       this.setState({ trackName: curFiles[0].name });
-      if (this.state.audioCtx !== null) {
-        this.state.audioCtx.suspend();
+      if(this.state.audioCtx !== null) {
+          this.state.audioCtx.suspend();
       }
       this.setState({ isPlaying: false });
-      this.setState({ audioCtx: null });
-      console.log(this.state.audioCtx);
+        this.state.audioCtx = null;
     }
-    this.render();
+    //this.render();
   }
 
   handleVolume() {
@@ -207,3 +212,4 @@ export default class Audio extends React.Component {
     renderFrame();
   }
 }
+
