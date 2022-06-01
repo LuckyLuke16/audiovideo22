@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Stack} from "react-bootstrap";
+import {Button} from "react-bootstrap";
 import { MusicNote, PauseFill, PlayFill } from "react-bootstrap-icons";
 import Filter from "./Filter";
 
@@ -9,14 +9,15 @@ export default class Audio extends React.Component {
     this.analyzerCanvas = React.createRef();
     this.volumeSlider = React.createRef();
     this.state = {
-      songPath: process.env.PUBLIC_URL + "basic_beat.wav",
-      audioElementNumber: props.value,
-      trackName: "basic_beat",
-      audioCtx: null,
-      analyser: null,
-      buffer: null,
-      isPlaying: false,
-      value: 0.5,
+        songPath: process.env.PUBLIC_URL + "basic_beat.wav",
+        audioElementNumber: props.value,
+        trackName: "basic_beat",
+        audioCtx: null,
+        analyser: null,
+        buffer: null,
+        source: null,
+        isPlaying: false,
+        value: 0.5,
         gainNode: null,
 
     };
@@ -66,9 +67,8 @@ export default class Audio extends React.Component {
           <canvas ref={this.analyzerCanvas}></canvas>{" "}
         </div>
           <Filter
-              audioCtx={this.state.audioCtx}
-              nodeBeforeFilter={this.state.gainNode}
-              nodeAfterFilter={this.state.analyser}
+              audio={this.state}
+
           />
       </div>
     );
@@ -96,29 +96,28 @@ export default class Audio extends React.Component {
             let analyser = audioCtx.createAnalyser();
             this.state.analyser = analyser;
             let request = new XMLHttpRequest();
-            this.render();
-            //let filter = new Filter(audioCtx = this.state.audioCtx);
             request.open('GET', this.state.songPath, true);
             request.responseType = 'arraybuffer';
-
             request.onload = function () {
                 let audioData = request.response;
                 audioCtx.decodeAudioData(audioData, function (buffer) {
                     source.buffer = buffer;
                     analyser.connect(audioCtx.destination);
-                    source.connect(gainNode)
-                    //filter.setFilter(gainNode,analyser,audioCtx);
-                    //gainNode.connect(analyser)
+                    source.connect(gainNode);
+                    gainNode.connect(analyser);
                     source.loop = true;
                     source.start(0);
                 });
             };
             request.send();
+            this.state.source = source;
             this.state.gainNode = gainNode;
             this.state.audioCtx = audioCtx;
             this.state.isPlaying = true;
             this.createVisualization();
             this.handleVolume();
+            console.log(this.state.audioCtx);
+
 
   }
 
@@ -141,10 +140,10 @@ export default class Audio extends React.Component {
           this.state.audioCtx.suspend();
       }
       this.setState({ isPlaying: false });
-      this.setState({ audioCtx: null });
-      console.log(this.state.audioCtx);
+      //this.setState({ audioCtx: null });
+        this.state.audioCtx = null;
     }
-    this.render();
+    //this.render();
   }
 
     handleVolume() {
