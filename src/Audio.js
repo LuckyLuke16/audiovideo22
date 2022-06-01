@@ -1,6 +1,7 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import {Button, Card, Stack} from "react-bootstrap";
 import { MusicNote, PauseFill, PlayFill } from "react-bootstrap-icons";
+import Filter from "./Filter";
 
 export default class Audio extends React.Component {
   constructor(props) {
@@ -64,6 +65,11 @@ export default class Audio extends React.Component {
         <div>
           <canvas ref={this.analyzerCanvas}></canvas>{" "}
         </div>
+          <Filter
+              audioCtx={this.state.audioCtx}
+              nodeBeforeFilter={this.state.gainNode}
+              nodeAfterFilter={this.state.analyser}
+          />
       </div>
     );
   }
@@ -84,14 +90,14 @@ export default class Audio extends React.Component {
       this.state.isPlaying = true;
       return;
     }
-
             let audioCtx = this.state.audioCtx;
             let gainNode = this.state.gainNode;
             let source = audioCtx.createBufferSource();
             let analyser = audioCtx.createAnalyser();
             this.state.analyser = analyser;
             let request = new XMLHttpRequest();
-
+            this.render();
+            //let filter = new Filter(audioCtx = this.state.audioCtx);
             request.open('GET', this.state.songPath, true);
             request.responseType = 'arraybuffer';
 
@@ -101,7 +107,8 @@ export default class Audio extends React.Component {
                     source.buffer = buffer;
                     analyser.connect(audioCtx.destination);
                     source.connect(gainNode)
-                    gainNode.connect(analyser)
+                    //filter.setFilter(gainNode,analyser,audioCtx);
+                    //gainNode.connect(analyser)
                     source.loop = true;
                     source.start(0);
                 });
@@ -181,7 +188,6 @@ export default class Audio extends React.Component {
             canvasCtx.lineTo(width, height / 2);
             canvasCtx.stroke();
         }
-
         renderFrame();
     }
 }
