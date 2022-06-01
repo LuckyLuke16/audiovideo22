@@ -53,7 +53,6 @@ export default class Audio extends React.Component {
           />
         </div>
         <div className="cardItems">
-          <MusicNote size="30" />
           <Button variant="outline-light">
             <input
               type="file"
@@ -84,7 +83,6 @@ export default class Audio extends React.Component {
         </div>
           <Filter
               audio={this.state}
-
           />
       </div>
     );
@@ -126,19 +124,19 @@ export default class Audio extends React.Component {
                 });
             };
             request.send();
-            // this.state.source = source;
             this.state.gainNode = gainNode;
             this.state.audioCtx = audioCtx;
             this.state.isPlaying = true;
             this.createVisualization();
             this.handlePlaybackSpeed();
             this.handleVolume();
-            console.log(this.state.audioCtx);
 
 
   }
 
   pause() {
+      if(this.state.audioCtx=== null)
+          return
     this.state.isPlaying = false;
     this.state.audioCtx.suspend();
   }
@@ -157,7 +155,6 @@ export default class Audio extends React.Component {
           this.state.audioCtx.suspend();
       }
       this.setState({ isPlaying: false });
-      //this.setState({ audioCtx: null });
         this.state.audioCtx = null;
     }
     //this.render();

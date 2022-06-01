@@ -8,8 +8,11 @@ export default class Filter extends React.Component{
         console.log("render");
         super(props);
         this.audio = this.props.audio;
-        this.isLowpassOn = false;
         this.lowpassFilter = null;
+        this.state = {
+            isLowpassOn : false,
+            clickedColor: false,
+        }
     }
     setFilter(filterTyp){
         console.log(this.audio.audioCtx);
@@ -18,11 +21,11 @@ export default class Filter extends React.Component{
         }
         switch(filterTyp){
             case "lowpass":
-                if(this.isLowpassOn === false) {
+                if(this.state.isLowpassOn === false) {
                     this.setLowpassFilterOn();
                 }else
                     this.setLowpassFilterOff();
-                this.isLowpassOn = !this.isLowpassOn;
+                this.setState({isLowpassOn: !this.state.isLowpassOn});
                 break;
             default:
                 break;
@@ -33,7 +36,8 @@ export default class Filter extends React.Component{
             <Card className='filter-card'>
                 <Card.Body>Filters
                     <Stack gap={3}>
-                        <Button variant="outline-light"
+                        <Button
+                                variant={this.state.isLowpassOn ? "warning" : "outline-light"}
                                 onClick={() => this.setFilter("lowpass")}
                         >Lowpass Filter</Button>{' '}
                         <Button variant="outline-light">Filter</Button>{' '}
@@ -44,22 +48,23 @@ export default class Filter extends React.Component{
         );
     }
 
-
     // updates audio prop from audio component
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("update in Props occured");
         if(this.props.audio !== prevProps.audio){
-            console.log("change detected");
             this.audio = this.props.audio;
+            if(this.props.audio.audioCtx === null)
+            {
+                console.log("cx is null");
+                this.setState({isLowpassOn : false});
+            }
         }
     }
-
     setLowpassFilterOn() {
-            this.lowpassFilter = this.audio.audioCtx.createBiquadFilter();
+        console.log("turn on lowpass filter");
+        this.lowpassFilter = this.audio.audioCtx.createBiquadFilter();
             this.lowpassFilter.type = "lowpass";
             this.lowpassFilter.frequency.setValueAtTime(500,this.audio.audioCtx.currentTime);
             this.audio.source.disconnect();
-            console.log("turn on lowpass filter");
             this.audio.source.connect(this.lowpassFilter);
             this.lowpassFilter.connect(this.audio.gainNode);
             this.audio.gainNode.connect(this.audio.analyser);
