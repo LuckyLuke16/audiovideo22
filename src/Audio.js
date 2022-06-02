@@ -27,12 +27,25 @@ export default class Audio extends React.Component {
   }
   render() {
       let playPauseIcon;
+      let volumeIcon;
       if (this.state.isPlaying) {
           playPauseIcon = <PauseFill size="30" />;
       } else {
           playPauseIcon = <PlayFill size="30" />;
       }
-    return (
+      //volume Icon changing with volume value
+      if(this.state.value <= 0.3)
+          volumeIcon = <VolumeOffFill size="29"></VolumeOffFill>
+      if(this.state.value >=0.7)
+          volumeIcon = <VolumeUpFill size="29"></VolumeUpFill>
+      if(this.state.value == 0){
+          volumeIcon = <VolumeMuteFill size="29"></VolumeMuteFill>
+      }
+      if(this.state.value > 0.3 && this.state.value <0.7)
+          volumeIcon = <VolumeDownFill size="29"></VolumeDownFill>
+
+
+      return (
       <div>
         <p>{this.state.trackName}</p>
         <div className="cardItems">track position</div>
@@ -74,12 +87,7 @@ export default class Audio extends React.Component {
           </Button>{" "}
         </div>
         <div className="cardItems">
-            <div>
-            <div> <VolumeMuteFill size="29"></VolumeMuteFill>
-
-            </div>
-
-            </div>
+            {volumeIcon}
           <input
             type="range"
             min="0"

@@ -100,4 +100,7 @@ p {
 #Github {
   font-size: larger;
 }
-
+#volumeIcon {
+  position: absolute;
+  left: 5%;
+}

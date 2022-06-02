@@ -10,7 +10,7 @@ function App() {
     <div className="App">
       <Navbar bg="dark" variant="dark" expand="sm">
         <Container>
-          <Navbar.Brand id="appTitle" href="#home"><MusicNote size="50"/>AudioPlayer</Navbar.Brand>
+          <Navbar.Brand id="appTitle" href="#home"><MusicNote size="60"/>AudioPlayer</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
