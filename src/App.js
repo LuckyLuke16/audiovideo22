@@ -2,6 +2,7 @@ import './App.css';
 import Audio from './Audio.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Navbar, Nav, Row, Col, Card, Stack, Button } from 'react-bootstrap';
+import {Github, MusicNote} from "react-bootstrap-icons";
 import React from 'react';
 
 function App() {
@@ -9,11 +10,11 @@ function App() {
     <div className="App">
       <Navbar bg="dark" variant="dark" expand="sm">
         <Container>
-          <Navbar.Brand href="#home">app name</Navbar.Brand>
+          <Navbar.Brand id="appTitle" href="#home"><MusicNote size="50"/>AudioPlayer</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#link">Github</Nav.Link>
+              <Nav.Link id="Github" href="https://github.com/LuckyLuke16/audiovideo22"><Github size="37"/>    Github</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

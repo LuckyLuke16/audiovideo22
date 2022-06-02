@@ -1,7 +1,8 @@
 import React from "react";
 import {Button} from "react-bootstrap";
-import {MusicNote, PauseBtn, PauseFill, PlayFill} from "react-bootstrap-icons";
+import {PauseBtn, PauseFill, PlayFill, Bell, SkipBackwardFill,SkipForwardFill, Upload,VolumeMuteFill, VolumeUpFill,VolumeDownFill, VolumeOffFill} from "react-bootstrap-icons";
 import Filter from "./Filter";
+
 
 export default class Audio extends React.Component {
   constructor(props) {
@@ -9,7 +10,6 @@ export default class Audio extends React.Component {
     this.analyzerCanvas = React.createRef();
     this.volumeSlider = React.createRef();
     this.playbackSpeedSlider = React.createRef();
-    this.playPause = true;
     this.state = {
         songPath: process.env.PUBLIC_URL + "basic_beat.wav",
         audioElementNumber: props.value,
@@ -37,8 +37,14 @@ export default class Audio extends React.Component {
         <p>{this.state.trackName}</p>
         <div className="cardItems">track position</div>
         <div className="cardItems">
+            <Button variant="outline-light" >
+                <SkipBackwardFill size="25"/>
+            </Button>{" "}
             <Button variant="outline-light" onClick={() => this.handlePlayPause()}>
                 {playPauseIcon}
+            </Button>{" "}
+            <Button variant="outline-light" >
+                <SkipForwardFill size="25"/>
             </Button>{" "}
         </div>
         <div className="cardItems">
@@ -64,12 +70,15 @@ export default class Audio extends React.Component {
               accept=".wav,.mp3,.ogg"
               onChange={() => this.handleFileUpload()}
             />
-            {<MusicNote size="30" />}Choose Audio
+            {<Upload size="20" />}  Upload Audio
           </Button>{" "}
         </div>
         <div className="cardItems">
             <div>
-            <p2>Volume:</p2>
+            <div> <VolumeMuteFill size="29"></VolumeMuteFill>
+
+            </div>
+
             </div>
           <input
             type="range"
