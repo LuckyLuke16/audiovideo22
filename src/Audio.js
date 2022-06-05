@@ -1,7 +1,10 @@
 import React from "react";
-import { Button } from "react-bootstrap";
-import { MusicNote, PauseFill, PlayFill } from "react-bootstrap-icons";
+import {Button} from "react-bootstrap";
+import {PauseFill, PlayFill, SkipBackwardFill,SkipForwardFill,
+    Upload,VolumeMuteFill, VolumeUpFill,VolumeDownFill, VolumeOffFill} from "react-bootstrap-icons";
 import Filter from "./Filter";
+import Marquee from "react-fast-marquee";
+
 
 export default class Audio extends React.Component {
   constructor(props) {
@@ -9,7 +12,6 @@ export default class Audio extends React.Component {
     this.analyzerCanvas = React.createRef();
     this.volumeSlider = React.createRef();
     this.playbackSpeedSlider = React.createRef();
-
     this.state = {
         songPath: process.env.PUBLIC_URL + "basic_beat.wav",
         audioElementNumber: props.value,
@@ -22,35 +24,49 @@ export default class Audio extends React.Component {
         value: 0.5,
         gainNode: null,
         playbackSpeed: 1,
-
+        titleLength : false,
     };
   }
   render() {
-    return (
+      let playPauseIcon;
+      let volumeIcon;
+      if (this.state.isPlaying) {
+          playPauseIcon = <PauseFill size="30" />;
+      } else {
+          playPauseIcon = <PlayFill size="30" />;
+      }
+      //volume Icon changing with volume value
+      if(this.state.value <= 0.3)
+          volumeIcon = <VolumeOffFill id="volumeIcon" size="29"></VolumeOffFill>
+      if(this.state.value >=0.8)
+          volumeIcon = <VolumeUpFill id="volumeIcon" size="29"></VolumeUpFill>
+      if(this.state.value == 0){
+          volumeIcon = <VolumeMuteFill id="volumeIcon" size="29"></VolumeMuteFill>
+      }
+      if(this.state.value > 0.3 && this.state.value <0.8)
+          volumeIcon = <VolumeDownFill id="volumeIcon" size="29"></VolumeDownFill>
+      return (
       <div>
-        <p>{this.state.trackName}</p>
-        <div className="cardItems">track position</div>
-        <div className="cardItems">
-          <Button variant="outline-light" onClick={() => this.play()}>
-            <PlayFill size="30" />
-          </Button>{" "}
-          <Button variant="outline-light" onClick={() => this.pause()}>
-            <PauseFill size="30" />
-          </Button>{" "}
-        </div>
+          <Marquee
+              play={this.state.titleLength}
+              gradient={false}
+              pauseOnHover={true}
+              pauseOnClick={true}
+          >
 
+        <p id="songTitle">{this.state.trackName}</p>
+          </Marquee>
+          <div className="cardItems">track position</div>
         <div className="cardItems">
-          Playback speed: {this.state.playbackSpeed}
-          <input
-            type="range"
-            min="0.5"
-            max="2"
-            step="0.5"
-            value={this.state.playbackSpeed}
-            className="slider"
-            ref={this.playbackSpeedSlider}
-            onChange={(e) => this.handlePlaybackSpeed(e.target.value)}
-          />
+            <Button variant="outline-light" >
+                <SkipBackwardFill size="25"/>
+            </Button>{" "}
+            <Button variant="outline-light" onClick={() => this.handlePlayPause()}>
+                {playPauseIcon}
+            </Button>{" "}
+            <Button variant="outline-light" >
+                <SkipForwardFill size="25"/>
+            </Button>{" "}
         </div>
         <div className="cardItems">
           <Button variant="outline-light">
@@ -62,11 +78,24 @@ export default class Audio extends React.Component {
               accept=".wav,.mp3,.ogg"
               onChange={() => this.handleFileUpload()}
             />
-            {<MusicNote size="30" />}Choose Audio
+            {<Upload size="20" />}  Upload Audio
           </Button>{" "}
         </div>
+          <div className="cardItems">
+              Playback speed: {this.state.playbackSpeed}x
+              <input
+                  type="range"
+                  min="0.5"
+                  max="2"
+                  step="0.5"
+                  value={this.state.playbackSpeed}
+                  className="slider"
+                  ref={this.playbackSpeedSlider}
+                  onChange={(e) => this.handlePlaybackSpeed(e.target.value)}
+              />
+          </div>
         <div className="cardItems">
-          Volume: {this.state.value}
+            {volumeIcon}
           <input
             type="range"
             min="0"
@@ -78,8 +107,8 @@ export default class Audio extends React.Component {
             onChange={(e) => this.handleVolume(e.target.value)}
           />
         </div>
-        <div>
-          <canvas ref={this.analyzerCanvas}></canvas>{" "}
+        <div hidden={this.state.audioCtx === null}>
+          <canvas id="canvas" ref={this.analyzerCanvas}></canvas>{" "}
         </div>
           <Filter
               audio={this.state}
@@ -88,11 +117,14 @@ export default class Audio extends React.Component {
     );
   }
 
-  play() {
-    if (this.state.isPlaying === true) {
-      return;
-    }
+  handlePlayPause(){
+      if(this.state.isPlaying === true)
+          this.pause();
+      else
+          this.play();
+  }
 
+  play() {
     if (this.state.audioCtx === null) {
       this.state.audioCtx = new AudioContext();
       this.state.gainNode = this.state.audioCtx.createGain();
@@ -100,7 +132,7 @@ export default class Audio extends React.Component {
 
     if (this.state.audioCtx.state === "suspended") {
       this.state.audioCtx.resume();
-      this.state.isPlaying = true;
+      this.setState({isPlaying: true})
       return;
     }
             let audioCtx = this.state.audioCtx;
@@ -125,7 +157,6 @@ export default class Audio extends React.Component {
             };
             request.send();
             this.state.gainNode = gainNode;
-            this.state.audioCtx = audioCtx;
             this.state.isPlaying = true;
             this.createVisualization();
             this.handlePlaybackSpeed();
@@ -134,11 +165,15 @@ export default class Audio extends React.Component {
 
   }
 
+    setDest(audioCtx) {
+        this.state.duration = audioCtx;
+    }
+
   pause() {
       if(this.state.audioCtx=== null)
           return
-    this.state.isPlaying = false;
-    this.state.audioCtx.suspend();
+      this.setState({isPlaying: false});
+      this.state.audioCtx.suspend();
   }
   /**
    * input file element of the audio component render function gives containing file to song path
@@ -151,6 +186,11 @@ export default class Audio extends React.Component {
     if (curFiles.item(0) != null) {
       this.setState({ songPath: URL.createObjectURL(curFiles[0]) });
       this.setState({ trackName: curFiles[0].name });
+      if(curFiles[0].name.length >= 25){
+          this.setState({titleLength: true});
+      }else {
+          this.setState({titleLength: false});
+      }
       if(this.state.audioCtx !== null) {
           this.state.audioCtx.suspend();
       }
