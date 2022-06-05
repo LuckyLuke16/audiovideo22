@@ -41,6 +41,7 @@
   background: linear-gradient(180deg, rgba(144,168,154,1) 32%, rgba(224,210,170,1) 100%);
   color: white;
   border: none;
+  width: 30em;
 }
 .filter-card{
   background: linear-gradient(180deg, rgba(223,167,97,1) 52%, rgba(236,188,155,1) 100%);
@@ -59,7 +60,6 @@
 p {
   font-size: larger;
   font-family: "Arial Black";
-
 }
 .cardItems {
   margin-bottom: 2rem !important;
@@ -98,9 +98,20 @@ p {
   cursor: pointer;
 }
 #Github {
-  font-size: larger;
+  font-size: x-large;
 }
 #volumeIcon {
   position: absolute;
   left: 5%;
+}
+#songTitle {
+  left: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+#canvas {
+  width: 80%;
+}
+.Marquee {
+  width: 80%;
 }
