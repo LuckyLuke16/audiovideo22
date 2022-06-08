@@ -8,22 +8,39 @@ export default class Filter extends React.Component{
         super(props);
         this.audio = this.props.audio;
         this.lowpassFilter = null;
+        this.highpassFilter = null;
         this.state = {
             isLowpassOn : false,
+            isHighpassOn : false,
             clickedColor: false,
         }
     }
+
     setFilter(filterTyp){
         if(this.audio.audioCtx === null) {
             return;
         }
         switch(filterTyp){
             case "lowpass":
-                if(this.state.isLowpassOn === false) {
-                    this.setLowpassFilterOn();
-                }else
-                    this.setLowpassFilterOff();
-                this.setState({isLowpassOn: !this.state.isLowpassOn});
+                if(this.state.isHighpassOn)
+                    return;
+                this.setState({isLowpassOn: !this.state.isLowpassOn}, function () {
+                    if (this.state.isLowpassOn === true) {
+                        this.setLowpassFilterOn();
+                    } else
+                        this.turnFilterOff();
+                });
+                break;
+            case "highpass":
+                if(this.state.isLowpassOn)
+                    return;
+                this.setState({isHighpassOn: !this.state.isHighpassOn}, function () {
+                    if (this.state.isHighpassOn === true) {
+                        this.setHighpassFilterOn();
+                    } else {
+                        this.turnFilterOff();
+                    }
+                });
                 break;
             default:
                 break;
@@ -32,13 +49,17 @@ export default class Filter extends React.Component{
     render(){
         return(
             <Card className='filter-card'>
-                <Card.Body>Filters
+                <Card.Body>
+                    <p>Filters</p>
                     <Stack gap={3}>
                         <Button
-                                variant={this.state.isLowpassOn ? "warning" : "outline-light"}
-                                onClick={() => this.setFilter("lowpass")}
+                            variant={this.state.isLowpassOn ? "warning" : "outline-light"}
+                            onClick={() => this.setFilter("lowpass")}
                         >Lowpass Filter</Button>{' '}
-                        <Button variant="outline-light">Filter</Button>{' '}
+                        <Button
+                            variant={this.state.isHighpassOn ? "warning" : "outline-light"}
+                            onClick={() => this.setFilter("highpass")}
+                        >Highpass Filter</Button>{' '}
                         <Button variant="outline-light">Filter</Button>{' '}
                     </Stack>
                 </Card.Body>
@@ -54,12 +75,13 @@ export default class Filter extends React.Component{
             if(this.props.audio.audioCtx === null)
             {
                 this.setState({isLowpassOn : false});
+                this.setState({isHighpassOn : false});
             }
         }
     }
+
     setLowpassFilterOn() {
-        console.log("turn on lowpass filter");
-        this.lowpassFilter = this.audio.audioCtx.createBiquadFilter();
+            this.lowpassFilter = this.audio.audioCtx.createBiquadFilter();
             this.lowpassFilter.type = "lowpass";
             this.lowpassFilter.frequency.setValueAtTime(500,this.audio.audioCtx.currentTime);
             this.audio.source.disconnect();
@@ -69,10 +91,20 @@ export default class Filter extends React.Component{
             this.audio.analyser.connect(this.audio.audioCtx.destination);
     }
 
-    setLowpassFilterOff() {
-        console.log("turn off lowpass filter");
+    turnFilterOff() {
         this.audio.source.disconnect();
         this.audio.source.connect(this.audio.gainNode);
+        this.audio.gainNode.connect(this.audio.analyser);
+        this.audio.analyser.connect(this.audio.audioCtx.destination);
+    }
+
+    setHighpassFilterOn() {
+        this.highpassFilter = this.audio.audioCtx.createBiquadFilter();
+        this.highpassFilter.type = "highpass";
+        this.highpassFilter.frequency.setValueAtTime(2000,this.audio.audioCtx.currentTime);
+        this.audio.source.disconnect();
+        this.audio.source.connect(this.highpassFilter);
+        this.highpassFilter.connect(this.audio.gainNode);
         this.audio.gainNode.connect(this.audio.analyser);
         this.audio.analyser.connect(this.audio.audioCtx.destination);
     }
