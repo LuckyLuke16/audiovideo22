@@ -50,6 +50,13 @@
 .volume-card{
   background: linear-gradient(180deg, rgba(195,180,176,1) 32%, rgba(175,186,171,1) 100%);
   color: white;
+  height: 20em;
+}
+.equalizer-card{
+  background: linear-gradient(180deg, rgba(195,180,176,1) 32%, rgba(175,186,171,1) 100%);
+  color: white;
+  height: 20em;
+  margin-top: 1em;
 }
 .upload {
   opacity: 0;
@@ -103,6 +110,7 @@ p {
 #volumeIcon {
   position: absolute;
   left: 5%;
+
 }
 #songTitle {
   left: 0;
@@ -115,3 +123,8 @@ p {
 .Marquee {
   width: 80%;
 }
+.Equalizer {
+  width: 16em;
+  height: 20em;
+}
+
