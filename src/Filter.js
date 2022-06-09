@@ -11,12 +11,15 @@ export default class Filter extends React.Component{
         //filter nodes
         this.lowpassFilter = null;
         this.highpassFilter = null;
-        // equalizer nodes
+        // equalizer nodes and sliders
         this.lowshelfNode = null;
         this.lowshelfSlider = React.createRef();
         this.peakingNode1 = null
+        this.peaking1Slider = React.createRef();
         this.peakingNode2 = null
+        this.peaking2Slider = React.createRef();
         this.peakingNode3 = null
+        this.peaking3Slider = React.createRef();
         this.highshelfNode = null;
         this.highshelfSlider = React.createRef();
         this.state = {
@@ -25,6 +28,9 @@ export default class Filter extends React.Component{
             clickedColor: false,
             // equalizer nodes SliderValues
             lowshelfValue: 0,
+            peaking1Value: 0,
+            peaking2Value: 0,
+            peaking3Value: 0,
             highshelfValue: 0,
 
         }
@@ -74,7 +80,7 @@ export default class Filter extends React.Component{
                             variant={this.state.isHighpassOn ? "warning" : "outline-light"}
                             onClick={() => this.setFilter("highpass")}
                         >Highpass Filter</Button>{' '}
-                        <Button variant="outline-light">Equalizer</Button>{' '}
+                        <Button variant="outline-light">Custom Filter</Button>{' '}
                     </Stack>
 
                 </Card.Body>
@@ -104,7 +110,10 @@ export default class Filter extends React.Component{
                                 min="-20"
                                 max="20"
                                 step="1"
+                                value={this.state.peaking1Value}
                                 className="eqslider"
+                                ref={this.peaking1Slider}
+                                onChange={() => this.changePeaking1Gain()}
                             />
                             <input
                                 id="equalizer3"
@@ -112,7 +121,10 @@ export default class Filter extends React.Component{
                                 min="-20"
                                 max="20"
                                 step="1"
+                                value={this.state.peaking2Value}
                                 className="eqslider"
+                                ref={this.peaking2Slider}
+                                onChange={() => this.changePeaking2Gain()}
                             />
                             <input
                                 id="equalizer4"
@@ -120,7 +132,10 @@ export default class Filter extends React.Component{
                                 min="-20"
                                 max="20"
                                 step="1"
+                                value={this.state.peaking3Value}
                                 className="eqslider"
+                                ref={this.peaking3Slider}
+                                onChange={() => this.changePeaking3Gain()}
                             />
                             <input
                                 id="equalizer5"
@@ -162,12 +177,24 @@ export default class Filter extends React.Component{
                     this.highshelfNode.type = "highshelf";
                     this.highshelfNode.frequency.value = 4000;
                     this.highshelfNode.gain.setValueAtTime(this.highshelfSlider.current.value, this.audio.audioCtx.currentTime);
+                    this.peakingNode1 = this.audio.audioCtx.createBiquadFilter();
+                    this.peakingNode1.type = "peaking";
+                    this.peakingNode1.frequency.value = 2150;
+                    this.peakingNode1.gain.setValueAtTime(this.peaking1Slider.current.value, this.audio.audioCtx.currentTime);
+
+                    this.peakingNode2 = this.audio.audioCtx.createBiquadFilter();
+                    this.peakingNode2.type = "peaking";
+                    this.peakingNode2.frequency.value = 1000;
+                    this.peakingNode2.gain.setValueAtTime(this.peaking2Slider.current.value, this.audio.audioCtx.currentTime);
+
+                    this.peakingNode3 = this.audio.audioCtx.createBiquadFilter();
+                    this.peakingNode3.type = "peaking";
+                    this.peakingNode3.frequency.value = 3000;
+                    this.peakingNode3.gain.setValueAtTime(this.peaking3Slider.current.value, this.audio.audioCtx.currentTime);
+
                     this.audio.source.disconnect();
                     this.audio.source.connect(this.lowshelfNode);
-                    this.lowshelfNode.connect(this.highshelfNode);
-                    this.highshelfNode.connect(this.audio.gainNode);
-                    this.audio.gainNode.connect(this.audio.analyser);
-                    this.audio.analyser.connect(this.audio.audioCtx.destination);
+                    this.setEqualizerNodes();
                 }
             }
         }
@@ -179,9 +206,8 @@ export default class Filter extends React.Component{
             this.lowpassFilter.frequency.setValueAtTime(500,this.audio.audioCtx.currentTime);
             this.audio.source.disconnect();
             this.audio.source.connect(this.lowpassFilter);
-            this.lowpassFilter.connect(this.audio.gainNode);
-            this.audio.gainNode.connect(this.audio.analyser);
-            this.audio.analyser.connect(this.audio.audioCtx.destination);
+            this.lowpassFilter.connect(this.lowshelfNode);
+            this.setEqualizerNodes();
 
     }
 
@@ -199,19 +225,19 @@ export default class Filter extends React.Component{
         this.audio.source.connect(this.highpassFilter);
         this.highpassFilter.connect(this.lowshelfNode);
         this.setEqualizerNodes()
-        // this.highpassFilter.connect(this.lowshelfNode);
-        // this.lowshelfNode.connect(this.audio.gainNode);
-        // this.audio.gainNode.connect(this.audio.analyser);
-        // this.audio.analyser.connect(this.audio.audioCtx.destination);
     }
 
     setEqualizerNodes(){
-        this.lowshelfNode.connect(this.highshelfNode);
+        this.lowshelfNode.connect(this.peakingNode1);
+        this.peakingNode1.connect(this.peakingNode2);
+        this.peakingNode2.connect(this.peakingNode3);
+        this.peakingNode3.connect(this.highshelfNode);
         this.highshelfNode.connect(this.audio.gainNode);
         this.audio.gainNode.connect(this.audio.analyser);
         this.audio.analyser.connect(this.audio.audioCtx.destination);
     }
 
+    // onchange functions for gain values og equalizer nodes
     changeLowshelfGain() {
         this.setState({ lowshelfValue: this.lowshelfSlider.current.value });
         if (this.audio.audioCtx === null) {
@@ -226,6 +252,30 @@ export default class Filter extends React.Component{
             return;
         }
         this.highshelfNode.gain.setValueAtTime(this.highshelfSlider.current.value, this.audio.audioCtx.currentTime);
+    }
+
+    changePeaking1Gain() {
+        this.setState({ peaking1Value: this.peaking1Slider.current.value });
+        if (this.audio.audioCtx === null) {
+            return;
+        }
+        this.peakingNode1.gain.setValueAtTime(this.peaking1Slider.current.value, this.audio.audioCtx.currentTime);
+    }
+
+    changePeaking2Gain() {
+        this.setState({ peaking2Value: this.peaking2Slider.current.value });
+        if (this.audio.audioCtx === null) {
+            return;
+        }
+        this.peakingNode2.gain.setValueAtTime(this.peaking2Slider.current.value, this.audio.audioCtx.currentTime);
+    }
+
+    changePeaking3Gain() {
+        this.setState({ peaking3Value: this.peaking3Slider.current.value });
+        if (this.audio.audioCtx === null) {
+            return;
+        }
+        this.peakingNode3.gain.setValueAtTime(this.peaking3Slider.current.value, this.audio.audioCtx.currentTime);
     }
 }
 
