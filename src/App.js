@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Navbar, Nav, Row, Col, Card, Stack } from 'react-bootstrap';
 import {Github, FileEarmarkMusicFill} from "react-bootstrap-icons";
 import React from 'react';
+import Crossfade from "./Crossfade";
 
 function App() {
   return (
@@ -36,23 +37,10 @@ function App() {
             </Stack>
           </Col>
           <Col>
-            <Card className='volume-card'>
-
-              <Card.Body>Volume
-                <Stack gap={3}>
-                  <div>
-                    Crossfading
-                  </div>
-
-                  <Stack direction="horizontal" gap={4} className="col-md-5 mx-auto">
-                    <div >A</div>
-                    <div >Master</div>
-                    <div >B</div>
-                  </Stack>
-
-                </Stack>
-              </Card.Body>
-            </Card></Col>
+            <Crossfade
+            audio1={1}
+            />
+          </Col>
           <Col>
             <Stack gap={3}>
 
