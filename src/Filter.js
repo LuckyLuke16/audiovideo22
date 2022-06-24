@@ -178,6 +178,7 @@ export default class Filter extends React.Component{
                     this.highshelfNode.frequency.value = 4000;
                     this.highshelfNode.gain.setValueAtTime(this.highshelfSlider.current.value, this.audio.audioCtx.currentTime);
                     this.peakingNode1 = this.audio.audioCtx.createBiquadFilter();
+
                     this.peakingNode1.type = "peaking";
                     this.peakingNode1.frequency.value = 2150;
                     this.peakingNode1.gain.setValueAtTime(this.peaking1Slider.current.value, this.audio.audioCtx.currentTime);

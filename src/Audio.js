@@ -57,10 +57,22 @@ export default class Audio extends React.Component {
               pauseOnHover={true}
               pauseOnClick={true}
           >
-
         <p id="songTitle">{this.state.trackName}</p>
           </Marquee>
-          <div className="cardItems">track position</div>
+          <div className="cardItems">
+              <div className={"currentTime"}>{this.state.currentTime}</div>
+              <input
+                  type="range"
+                  min={"0"}
+                  step={"1"}
+                  max={this.state.lengthOfSong}
+                  value={this.state.currentTime}
+                  className="slider"
+                  ref={this.progressBar}
+                  onChange={(e) => this.handlePositionOfTheSong(e.target.value)}
+              />
+              <div className="duration">{this.state.lengthOfSong}</div>
+          </div>
         <div className="cardItems">
             <Button variant="outline-light" >
                 <SkipBackwardFill size="25"/>
@@ -86,7 +98,7 @@ export default class Audio extends React.Component {
           </Button>{" "}
         </div>
           <div className="cardItems">
-              Playback speed: {this.state.playbackSpeed}x
+              <h6>Playback Speed: {this.state.playbackSpeed}x </h6>
               <input
                   type="range"
                   min="0.5"
@@ -111,21 +123,7 @@ export default class Audio extends React.Component {
             onChange={(e) => this.handleVolume(e.target.value)}
           />
         </div>
-          <h6>Track position of the Song</h6>
-          <div className="cardItems">
-              <div className={"currentTime"}>{this.state.currentTime}</div>
-              <input
-                  type="range"
-                  min={"0"}
-                  step={"1"}
-                  max={this.state.lengthOfSong}
-                  value={this.state.currentTime}
-                  className="slider"
-                  ref={this.progressBar}
-                  onChange={(e) => this.handlePositionOfTheSong(e.target.value)}
-              />
-              <div className="duration">{this.state.lengthOfSong}</div>
-          </div>
+
           <div hidden={this.state.audioCtx === null}>
           <canvas id="canvas" ref={this.analyzerCanvas}></canvas>{" "}
         </div>
@@ -170,7 +168,7 @@ export default class Audio extends React.Component {
                     analyser.connect(audioCtx.destination);
                     source.connect(gainNode);
                     gainNode.connect(analyser);
-                    source.loop = true;
+                    //source.loop = true;
                     source.start(0);
                 });
             };
@@ -232,14 +230,26 @@ export default class Audio extends React.Component {
                 return;
             }
             this.setState({currentTime: Math.floor(this.state.audioCtx.currentTime)});
+            console.log(this.state.audioCtx.currentTime);
         }, 1000);
 
         setInterval(() => {
             if(this.state.isPlaying===false){
                 return;
             }
-            this.setState({lengthOfSong: Math.floor(this.state.source.buffer.duration)});
+             this.setState({lengthOfSong: Math.floor(this.state.source.buffer.duration)});
         }, 1000);
+    }
+
+    secToHHMM(number) {
+        let hours = Math.floor(number / 3600);
+        let minutes = Math.floor((number - (hours * 3600)) / 60);
+        let seconds = number - (hours * 3600) - (minutes * 60);
+        let H, M, S;
+        if (hours < 10) H = ("0" + hours);
+        if (minutes < 10) M = ("0" + minutes);
+        if (seconds < 10) S = ("0" + seconds);
+        return  (M || minutes) + ':' + (S || seconds);
     }
 
   handlePlaybackSpeed() {
