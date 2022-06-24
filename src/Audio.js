@@ -12,7 +12,9 @@ export default class Audio extends React.Component {
     this.analyzerCanvas = React.createRef();
     this.volumeSlider = React.createRef();
     this.playbackSpeedSlider = React.createRef();
-    this.state = {
+    this.progressBar = React.createRef();
+
+      this.state = {
         songPath: process.env.PUBLIC_URL + "basic_beat.wav",
         audioElementNumber: props.value,
         trackName: "basic_beat",
@@ -25,6 +27,8 @@ export default class Audio extends React.Component {
         gainNode: null,
         playbackSpeed: 1,
         titleLength : false,
+          lengthOfSong: 0,
+          currentTime: 0,
     };
   }
   render() {
@@ -107,7 +111,22 @@ export default class Audio extends React.Component {
             onChange={(e) => this.handleVolume(e.target.value)}
           />
         </div>
-        <div hidden={this.state.audioCtx === null}>
+          <h6>Track position of the Song</h6>
+          <div className="cardItems">
+              <div className={"currentTime"}>{this.state.currentTime}</div>
+              <input
+                  type="range"
+                  min={"0"}
+                  step={"1"}
+                  max={this.state.lengthOfSong}
+                  value={this.state.currentTime}
+                  className="slider"
+                  ref={this.progressBar}
+                  onChange={(e) => this.handlePositionOfTheSong(e.target.value)}
+              />
+              <div className="duration">{this.state.lengthOfSong}</div>
+          </div>
+          <div hidden={this.state.audioCtx === null}>
           <canvas id="canvas" ref={this.analyzerCanvas}></canvas>{" "}
         </div>
           <Filter
@@ -157,16 +176,14 @@ export default class Audio extends React.Component {
             };
             request.send();
             this.state.gainNode = gainNode;
+            this.state.audioCtx = audioCtx;
+            this.state.source = source;
             this.state.isPlaying = true;
+//            this.state.lengthOfSong = duration;
             this.createVisualization();
             this.handlePlaybackSpeed();
             this.handleVolume();
-
-
-  }
-
-    setDest(audioCtx) {
-        this.state.duration = audioCtx;
+            this.handlePositionOfTheSong();
     }
 
   pause() {
@@ -207,6 +224,24 @@ export default class Audio extends React.Component {
     }
     this.state.gainNode.gain.value = this.volumeSlider.current.value;
   }
+
+    handlePositionOfTheSong()
+    {
+        setInterval(() => {
+            if(this.state.currentTime >= this.state.lengthOfSong || this.state.isPlaying===false) {
+                return;
+            }
+            this.setState({currentTime: Math.floor(this.state.audioCtx.currentTime)});
+        }, 1000);
+
+        setInterval(() => {
+            if(this.state.isPlaying===false){
+                return;
+            }
+            this.setState({lengthOfSong: Math.floor(this.state.source.buffer.duration)});
+        }, 1000);
+    }
+
   handlePlaybackSpeed() {
     this.setState({ playbackSpeed: this.playbackSpeedSlider.current.value });
     if (this.state.audioCtx === null) {
