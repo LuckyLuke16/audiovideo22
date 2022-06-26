@@ -15,20 +15,21 @@ export default class Audio extends React.Component {
     this.progressBar = React.createRef();
 
       this.state = {
-        songPath: process.env.PUBLIC_URL + "basic_beat.wav",
-        audioElementNumber: props.value,
-        trackName: "basic_beat",
-        audioCtx: null,
-        analyser: null,
-        buffer: null,
-        source: null,
-        isPlaying: false,
-        value: 0.5,
-        gainNode: null,
-        playbackSpeed: 1,
-        titleLength : false,
+          songPath: process.env.PUBLIC_URL + "basic_beat.wav",
+          audioElementNumber: props.value,
+          trackName: "basic_beat",
+          audioCtx: null,
+          analyser: null,
+          buffer: null,
+          source: null,
+          isPlaying: false,
+          value: 0.5,
+          gainNode: null,
+          playbackSpeed: 1,
+          titleLength : false,
           lengthOfSong: 0,
           currentTime: 0,
+          isCounting: false
     };
   }
   render() {
@@ -44,7 +45,7 @@ export default class Audio extends React.Component {
           volumeIcon = <VolumeOffFill id="volumeIcon" size="29"></VolumeOffFill>
       if(this.state.value >=0.8)
           volumeIcon = <VolumeUpFill id="volumeIcon" size="29"></VolumeUpFill>
-      if(this.state.value == 0){
+      if(this.state.value === 0){
           volumeIcon = <VolumeMuteFill id="volumeIcon" size="29"></VolumeMuteFill>
       }
       if(this.state.value > 0.3 && this.state.value <0.8)
@@ -60,7 +61,7 @@ export default class Audio extends React.Component {
         <p id="songTitle">{this.state.trackName}</p>
           </Marquee>
           <div className="cardItems">
-              <div className={"currentTime"}>{this.state.currentTime}</div>
+              <div className={"currentTime"}>{this.secToMinAndSec(this.state.currentTime)}</div>
               <input
                   type="range"
                   min={"0"}
@@ -71,7 +72,7 @@ export default class Audio extends React.Component {
                   ref={this.progressBar}
                   onChange={(e) => this.handlePositionOfTheSong(e.target.value)}
               />
-              <div className="duration">{this.state.lengthOfSong}</div>
+              <div className="duration">{this.secToMinAndSec(this.state.lengthOfSong)}</div>
           </div>
         <div className="cardItems">
             <Button variant="outline-light" >
@@ -177,12 +178,12 @@ export default class Audio extends React.Component {
             this.state.audioCtx = audioCtx;
             this.state.source = source;
             this.state.isPlaying = true;
-//            this.state.lengthOfSong = duration;
             this.createVisualization();
             this.handlePlaybackSpeed();
             this.handleVolume();
             this.handlePositionOfTheSong();
-    }
+            this.state.currentTime = 1;
+  }
 
   pause() {
       if(this.state.audioCtx=== null)
@@ -225,12 +226,16 @@ export default class Audio extends React.Component {
 
     handlePositionOfTheSong()
     {
+        if(this.state.isCounting){
+            return;
+        }
+
+        this.state.isCounting = true;
         setInterval(() => {
             if(this.state.currentTime >= this.state.lengthOfSong || this.state.isPlaying===false) {
                 return;
             }
-            this.setState({currentTime: Math.floor(this.state.audioCtx.currentTime)});
-            console.log(this.state.audioCtx.currentTime);
+            this.setState({currentTime: parseFloat(this.state.currentTime) + parseFloat(this.state.playbackSpeed)});
         }, 1000);
 
         setInterval(() => {
@@ -241,15 +246,8 @@ export default class Audio extends React.Component {
         }, 1000);
     }
 
-    secToHHMM(number) {
-        let hours = Math.floor(number / 3600);
-        let minutes = Math.floor((number - (hours * 3600)) / 60);
-        let seconds = number - (hours * 3600) - (minutes * 60);
-        let H, M, S;
-        if (hours < 10) H = ("0" + hours);
-        if (minutes < 10) M = ("0" + minutes);
-        if (seconds < 10) S = ("0" + seconds);
-        return  (M || minutes) + ':' + (S || seconds);
+    secToMinAndSec(seconds) {
+      return Math.floor(seconds / 60) + ":" + Math.floor(seconds % 60 ? seconds % 60 : "00")
     }
 
   handlePlaybackSpeed() {
