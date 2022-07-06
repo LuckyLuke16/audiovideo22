@@ -155,4 +155,10 @@ p {
   width: 16em;
   height: 20em;
 }
+#durationOfSongBeginning {
+  margin-top: -1.5em;
+}
+#durationOfSongEnd {
+  margin-top: -1.5em;
+}
 

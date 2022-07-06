@@ -60,9 +60,10 @@ export default class Audio extends React.Component {
           >
         <p id="songTitle">{this.state.trackName}</p>
           </Marquee>
-          <div className="cardItems">
-              <div className={"currentTime"}>{this.secToMinAndSec(this.state.currentTime)}</div>
+          <div
+              id="f" className="cardItems">
               <input
+                  id="durationSlider"
                   type="range"
                   min={"0"}
                   step={"1"}
@@ -72,8 +73,9 @@ export default class Audio extends React.Component {
                   ref={this.progressBar}
                   onChange={(e) => this.handlePositionOfTheSong(e.target.value)}
               />
-              <div className="duration">{this.secToMinAndSec(this.state.lengthOfSong)}</div>
           </div>
+          <p id="durationOfSongBeginning" className={"currentTime"}>{this.secToMinAndSec(this.state.currentTime)}</p>
+          <p id="durationOfSongEnd" className="duration">{this.secToMinAndSec(this.state.lengthOfSong)}</p>
         <div className="cardItems">
             <Button variant="outline-light" >
                 <SkipBackwardFill size="25"/>
@@ -247,7 +249,10 @@ export default class Audio extends React.Component {
     }
 
     secToMinAndSec(seconds) {
-      return Math.floor(seconds / 60) + ":" + Math.floor(seconds % 60 ? seconds % 60 : "00")
+      if(Math.floor(seconds % 60) < 10 ) {
+          return Math.floor(seconds / 60) + ":" + "0" + Math.floor(seconds % 60 ? seconds % 60 : "00");
+      }
+      return Math.floor(seconds / 60) + ":" + Math.floor(seconds % 60 ? seconds % 60 : "00");
     }
 
   handlePlaybackSpeed() {
