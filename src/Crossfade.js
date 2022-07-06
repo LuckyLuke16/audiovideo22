@@ -8,9 +8,7 @@ export default class Crossfade extends React.Component{
     render(){
         return(
             <Card className='volume-card'>
-
                 <Card.Body>
-                    <h3>Audio Player</h3>
                     <p
                         id="textInCenter"
                     >
@@ -20,6 +18,7 @@ export default class Crossfade extends React.Component{
                         This project was developed as a part of the "Basics of
                         multimedia: audio - and video engineering" course by three students from the "University of
                         Applied Sciences" in Berlin.
+                        <br/>(Artur Horch, Ekaterina Losik, Justin Max Grothe)
                     </p>
                     <Stack gap={3}>
                         <Stack direction="horizontal" gap={4} className="col-md-5 mx-auto">

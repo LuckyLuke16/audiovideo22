@@ -162,8 +162,10 @@ p {
   margin-top: -1.5em;
 }
 #textInCenter {
-  font-size: small;
+  font-size: small ;
   font-family: "Arial Rounded MT Bold";
   text-align: justify;
+  color: rgba(255, 255, 255, 0.82);
 }
+
 
