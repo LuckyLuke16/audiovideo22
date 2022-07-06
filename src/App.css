@@ -161,4 +161,9 @@ p {
 #durationOfSongEnd {
   margin-top: -1.5em;
 }
+#textInCenter {
+  font-size: small;
+  font-family: "Arial Rounded MT Bold";
+  text-align: justify;
+}
 

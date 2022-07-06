@@ -10,7 +10,17 @@ export default class Crossfade extends React.Component{
             <Card className='volume-card'>
 
                 <Card.Body>
-                    <p>Crossfade</p>
+                    <h3>Audio Player</h3>
+                    <p
+                        id="textInCenter"
+                    >
+                        This frontend application was developed as a tool to play two audio files simultaneously.
+                        The basic functionalities include stopping audio files as well as uploading local files
+                        or changing the playback speed. With the help of the "Web Audio API" you can also manipulate the audio data or apply filters.
+                        This project was developed as a part of the "Basics of
+                        multimedia: audio - and video engineering" course by three students from the "University of
+                        Applied Sciences" in Berlin.
+                    </p>
                     <Stack gap={3}>
                         <Stack direction="horizontal" gap={4} className="col-md-5 mx-auto">
                         </Stack>
