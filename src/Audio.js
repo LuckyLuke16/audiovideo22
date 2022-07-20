@@ -1,6 +1,6 @@
 import React from "react";
 import {Button} from "react-bootstrap";
-import {PauseFill, PlayFill, SkipBackwardFill,SkipForwardFill,
+import {PauseFill, PlayFill,
     Upload,VolumeMuteFill, VolumeUpFill,VolumeDownFill, VolumeOffFill} from "react-bootstrap-icons";
 import Filter from "./Filter";
 import Marquee from "react-fast-marquee";
@@ -77,14 +77,8 @@ export default class Audio extends React.Component {
           <p id="durationOfSongBeginning" className={"currentTime"}>{this.secToMinAndSec(this.state.currentTime)}</p>
           <p id="durationOfSongEnd" className="duration">{this.secToMinAndSec(this.state.lengthOfSong)}</p>
         <div className="cardItems">
-            <Button variant="outline-light" >
-                <SkipBackwardFill size="25"/>
-            </Button>{" "}
             <Button variant="outline-light" onClick={() => this.handlePlayPause()}>
                 {playPauseIcon}
-            </Button>{" "}
-            <Button variant="outline-light" >
-                <SkipForwardFill size="25"/>
             </Button>{" "}
         </div>
         <div className="cardItems">
