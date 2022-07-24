@@ -1,10 +1,10 @@
-import './App.css';
-import Audio from './Audio.js';
+import './css/App.css';
+import Audio from './components/Audio.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Navbar, Nav, Row, Col, Card, Stack } from 'react-bootstrap';
 import {Github, FileEarmarkMusicFill} from "react-bootstrap-icons";
 import React from 'react';
-import Crossfade from "./Crossfade";
+import InfoPanel from "./components/InfoPanel";
 
 function App() {
   return (
@@ -37,7 +37,7 @@ function App() {
             </Stack>
           </Col>
           <Col>
-            <Crossfade
+            <InfoPanel
             audio1={1}
             />
           </Col>
@@ -54,13 +54,8 @@ function App() {
               </Card>
             </Stack>
           </Col>
-
         </Row>
-
       </Container>
-
-
-
     </div>
   );
 }

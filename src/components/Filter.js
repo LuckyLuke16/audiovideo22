@@ -1,8 +1,8 @@
-import "./App.css";
+import "../css/App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Card, Stack, Button } from "react-bootstrap";
 import React from "react";
-import "./Equalizer.css";
+import "../css/Equalizer.css";
 
 export default class Filter extends React.Component {
   constructor(props) {

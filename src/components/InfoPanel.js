@@ -1,9 +1,9 @@
-import './App.css';
+import '../css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { Card, Stack} from "react-bootstrap";
 
-export default class Crossfade extends React.Component{
+export default class InfoPanel extends React.Component{
 
     render(){
         return(
