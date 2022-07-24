@@ -2,11 +2,9 @@
   text-align: center;
   background: linear-gradient(170deg, rgba(245,236,195,1) 32%, rgba(255,214,156,1) 100%);
   min-height: 100vh;
-
 }
 
 .App-header {
-
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -116,7 +114,6 @@ p {
 }
 
 .progressBar {
-
   appearance: none;
   border-radius: 10px;
   position: relative;

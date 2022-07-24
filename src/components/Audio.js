@@ -165,7 +165,6 @@ export default class Audio extends React.Component {
                     analyser.connect(audioCtx.destination);
                     source.connect(gainNode);
                     gainNode.connect(analyser);
-                    //source.loop = true;
                     source.start(0);
                 });
             };
@@ -209,7 +208,6 @@ export default class Audio extends React.Component {
       this.setState({ isPlaying: false });
         this.state.audioCtx = null;
     }
-    //this.render();
   }
 
   handleVolume() {
